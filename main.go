@@ -18,7 +18,15 @@ func main() {
 
 	initConfig()
 
-	db, err := sqlx.Open("mysql", "root:babana@(localhost:3306)/banking?parseTime=true")
+	dsn := fmt.Sprintf("%v:%v@(%v:%v)/%v?parseTime=true",
+		viper.GetString("db.username"),
+		viper.GetString("db.password"),
+		viper.GetString("db.host"),
+		viper.GetInt("db.port"),
+		viper.GetString("db.database"),
+	)
+
+	db, err := sqlx.Open(viper.GetString("db.driver"), dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -26,8 +34,9 @@ func main() {
 	customerRepositoryDB := repository.NewCustomerRepositoryDB(db)
 	customerRepositoryMock := repository.NewCustomerRepositoryMock()
 	_ = customerRepositoryDB
+	_ = customerRepositoryMock
 
-	customerService := service.NewCustomerService(customerRepositoryMock)
+	customerService := service.NewCustomerService(customerRepositoryDB)
 	customerHandler := handler.NewCustomerHandler(customerService)
 
 	router := mux.NewRouter()
