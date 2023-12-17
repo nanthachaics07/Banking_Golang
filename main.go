@@ -11,9 +11,13 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
 	"github.com/jmoiron/sqlx"
+	"github.com/spf13/viper"
 )
 
 func main() {
+
+	initConfig()
+
 	db, err := sqlx.Open("mysql", "root:babana@(localhost:3306)/banking?parseTime=true")
 	if err != nil {
 		panic(err)
@@ -36,8 +40,13 @@ func main() {
 			panic(err)
 		}
 	}()
-
 	// Block the main goroutine to keep the server running
 	select {}
 
+}
+
+func initConfig() {
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
 }
