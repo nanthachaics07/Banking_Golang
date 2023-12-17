@@ -5,6 +5,7 @@ import (
 	"bank_test01/repository"
 	"bank_test01/service"
 	"fmt"
+	"strings"
 
 	"net/http"
 
@@ -18,7 +19,15 @@ func main() {
 
 	initConfig()
 
-	db, err := sqlx.Open("mysql", "root:babana@(localhost:3306)/banking?parseTime=true")
+	dsn := fmt.Sprintf("%v:%v@(%v:%v)/%v?parseTime=true",
+		viper.GetString("db.username"),
+		viper.GetString("db.password"),
+		viper.GetString("db.host"),
+		viper.GetInt("db.port"),
+		viper.GetString("db.database"),
+	)
+
+	db, err := sqlx.Open(viper.GetString("db.driver"), dsn)
 	if err != nil {
 		panic(err)
 	}
@@ -26,8 +35,9 @@ func main() {
 	customerRepositoryDB := repository.NewCustomerRepositoryDB(db)
 	customerRepositoryMock := repository.NewCustomerRepositoryMock()
 	_ = customerRepositoryDB
+	_ = customerRepositoryMock
 
-	customerService := service.NewCustomerService(customerRepositoryMock)
+	customerService := service.NewCustomerService(customerRepositoryDB)
 	customerHandler := handler.NewCustomerHandler(customerService)
 
 	router := mux.NewRouter()
@@ -35,8 +45,8 @@ func main() {
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
 	go func() {
-		fmt.Println("Server is listening on port 8000")
-		if err := http.ListenAndServe(":8000", router); err != nil {
+		fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
+		if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
 			panic(err)
 		}
 	}()
@@ -49,4 +59,13 @@ func initConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+
+	}
+
 }
