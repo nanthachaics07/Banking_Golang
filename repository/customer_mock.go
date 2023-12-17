@@ -1,3 +1,4 @@
+// Data for test cases
 package repository
 
 import "errors"
