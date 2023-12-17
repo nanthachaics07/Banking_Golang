@@ -2,6 +2,7 @@ package main
 
 import (
 	"bank_test01/repository"
+	"bank_test01/service"
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -15,20 +16,11 @@ func main() {
 	}
 
 	customerRepository := repository.NewCustomerRepositoryDB(db)
-	_ = customerRepository
+	customerService := service.NewCustomerService(customerRepository)
 
-	// 	customers, err := customerRepository.GetAll()
-	// 	if err != nil {
-	// 		panic(err)
-	// 	}
-
-	// 	fmt.Println(customers)
-	// }
-
-	customers, err := customerRepository.GetById(2000)
+	customers, err := customerService.GetCustomers()
 	if err != nil {
 		panic(err)
 	}
-
 	fmt.Println(customers)
 }
