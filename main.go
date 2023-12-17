@@ -4,6 +4,7 @@ import (
 	"bank_test01/handler"
 	"bank_test01/repository"
 	"bank_test01/service"
+	"fmt"
 
 	"net/http"
 
@@ -24,7 +25,16 @@ func main() {
 
 	router := mux.NewRouter()
 	router.HandleFunc("/customers", customerHandler.GetCustomers).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
-	http.ListenAndServe(":8000", router)
+	go func() {
+		fmt.Println("Server is listening on port 8000")
+		if err := http.ListenAndServe(":8000", router); err != nil {
+			panic(err)
+		}
+	}()
+
+	// Block the main goroutine to keep the server running
+	select {}
 
 }
