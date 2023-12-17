@@ -5,6 +5,6 @@ db:
   port: 3306
   driver: "mysql"
   host: "localhost" 
-  username: root
-  password: babana
-  database: banking
+  username: "root"
+  password: "babana"
+  database: "banking"
