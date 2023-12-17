@@ -17,7 +17,15 @@ func main() {
 	customerRepository := repository.NewCustomerRepositoryDB(db)
 	_ = customerRepository
 
-	customers, err := customerRepository.GetAll()
+	// 	customers, err := customerRepository.GetAll()
+	// 	if err != nil {
+	// 		panic(err)
+	// 	}
+
+	// 	fmt.Println(customers)
+	// }
+
+	customers, err := customerRepository.GetById(2000)
 	if err != nil {
 		panic(err)
 	}
