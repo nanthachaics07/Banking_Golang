@@ -5,6 +5,7 @@ import (
 	"bank_test01/repository"
 	"bank_test01/service"
 	"fmt"
+	"strings"
 
 	"net/http"
 
@@ -58,6 +59,8 @@ func initConfig() {
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
+	viper.AutomaticEnv()
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	err := viper.ReadInConfig()
 	if err != nil {
