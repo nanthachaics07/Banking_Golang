@@ -44,8 +44,8 @@ func main() {
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
 	go func() {
-		fmt.Println("Server is listening on port 8000")
-		if err := http.ListenAndServe(":8000", router); err != nil {
+		fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
+		if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
 			panic(err)
 		}
 	}()
