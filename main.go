@@ -18,7 +18,7 @@ func main() {
 	customerRepository := repository.NewCustomerRepositoryDB(db)
 	customerService := service.NewCustomerService(customerRepository)
 
-	customers, err := customerService.GetCustomers()
+	customers, err := customerService.GetCustomer(2000)
 	if err != nil {
 		panic(err)
 	}
