@@ -46,7 +46,7 @@ func (s customerService) GetCustomer(id int) (*CustomerResponse, error) {
 
 		}
 
-		log.Println(err)
+		logs.Error(err)
 		return nil, err
 	}
 	var custResponse = CustomerResponse{
