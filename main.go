@@ -20,18 +20,7 @@ func main() {
 
 	initConfig()
 
-	dsn := fmt.Sprintf("%v:%v@(%v:%v)/%v?parseTime=true",
-		viper.GetString("db.username"),
-		viper.GetString("db.password"),
-		viper.GetString("db.host"),
-		viper.GetInt("db.port"),
-		viper.GetString("db.database"),
-	)
-
-	db, err := sqlx.Open(viper.GetString("db.driver"), dsn)
-	if err != nil {
-		panic(err)
-	}
+	db := initDatabase()
 
 	customerRepositoryDB := repository.NewCustomerRepositoryDB(db)
 	customerRepositoryMock := repository.NewCustomerRepositoryMock()
@@ -78,4 +67,26 @@ func initTimeZone() {
 	}
 
 	time.Local = ict
+}
+
+func initDatabase() *sqlx.DB {
+	dsn := fmt.Sprintf("%v:%v@(%v:%v)/%v?parseTime=true",
+		viper.GetString("db.username"),
+		viper.GetString("db.password"),
+		viper.GetString("db.host"),
+		viper.GetInt("db.port"),
+		viper.GetString("db.database"),
+	)
+
+	db, err := sqlx.Open(viper.GetString("db.driver"), dsn)
+	if err != nil {
+		panic(err)
+	}
+
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	// Set memory
+	db.SetMaxIdleConns(10)
+
+	return db
 }
