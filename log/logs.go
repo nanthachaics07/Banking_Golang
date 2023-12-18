@@ -14,7 +14,7 @@ func init() {
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
 	var err error
-	log, err = config.Build()
+	log, err = config.Build(zap.AddCallerSkip(1))
 	if err != nil {
 		panic(err)
 	}
@@ -28,6 +28,11 @@ func Debug(massage string, fields ...zap.Field) {
 	log.Debug(massage, fields...)
 }
 
-func Error(massage string, fields ...zap.Field) {
-	log.Error(massage, fields...)
+func Error(massage interface{}, fields ...zap.Field) {
+	switch v := massage.(type) {
+	case error:
+		log.Error(v.Error(), fields...)
+	case string:
+		log.Error(v, fields...)
+	}
 }
