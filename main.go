@@ -36,7 +36,7 @@ func main() {
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
 	// log.Printf("Server is listening on port %v", viper.GetInt("app.port"))
-	logs.Log.Info("Server is listening on port " + viper.GetString("app.port"))
+	logs.Info("Server is listening on port " + viper.GetString("app.port"))
 	http.ListenAndServe(fmt.Sprintf(":%v", viper.GetInt("app.port")), router)
 
 	// go func() {
