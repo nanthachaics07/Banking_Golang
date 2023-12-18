@@ -34,14 +34,14 @@ func main() {
 	router.HandleFunc("/customers", customerHandler.GetCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
-	go func() {
-		fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
-		if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
-			panic(err)
-		}
-	}()
-	// Block the main goroutine to keep the server running
-	select {}
+	// go func() {
+	// 	fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
+	// 	if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
+	// // Block the main goroutine to keep the server running
+	// select {}
 
 }
 
