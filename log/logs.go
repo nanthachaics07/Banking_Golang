@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var Log *zap.Logger
+var log *zap.Logger
 
 func init() {
 
@@ -13,6 +13,21 @@ func init() {
 	config.EncoderConfig.TimeKey = "timestamp"
 	config.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
 
-	Log, _ = config.Build()
+	var err error
+	log, err = config.Build()
+	if err != nil {
+		panic(err)
+	}
+}
 
+func Info(massage string, fields ...zap.Field) {
+	log.Info(massage, fields...)
+}
+
+func Debug(massage string, fields ...zap.Field) {
+	log.Debug(massage, fields...)
+}
+
+func Error(massage string, fields ...zap.Field) {
+	log.Error(massage, fields...)
 }
