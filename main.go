@@ -6,6 +6,7 @@ import (
 	"bank_test01/service"
 	"fmt"
 	"strings"
+	"time"
 
 	"net/http"
 
@@ -68,4 +69,13 @@ func initConfig() {
 
 	}
 
+}
+
+func initTimeZone() {
+	ict, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		panic(err)
+	}
+
+	time.Local = ict
 }
