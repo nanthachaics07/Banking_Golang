@@ -2,6 +2,7 @@ package main
 
 import (
 	"bank_test01/handler"
+	logs "bank_test01/log"
 	"bank_test01/repository"
 	"bank_test01/service"
 	"fmt"
@@ -34,14 +35,18 @@ func main() {
 	router.HandleFunc("/customers", customerHandler.GetCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
-	go func() {
-		fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
-		if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
-			panic(err)
-		}
-	}()
-	// Block the main goroutine to keep the server running
-	select {}
+	// log.Printf("Server is listening on port %v", viper.GetInt("app.port"))
+	logs.Info("Server is listening on port " + viper.GetString("app.port"))
+	http.ListenAndServe(fmt.Sprintf(":%v", viper.GetInt("app.port")), router)
+
+	// go func() {
+	// 	fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
+	// 	if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
+	// // Block the main goroutine to keep the server running
+	// select {}
 
 }
 

@@ -1,6 +1,7 @@
 package service
 
 import (
+	logs "bank_test01/log"
 	"bank_test01/repository"
 	"database/sql"
 	"errors"
@@ -19,6 +20,7 @@ func (s customerService) GetCustomers() ([]CustomerResponse, error) {
 	customers, err := s.custRepo.GetAll()
 	if err != nil {
 		log.Println(err)
+		logs.Error(err.Error())
 		return nil, err
 	}
 
@@ -44,7 +46,7 @@ func (s customerService) GetCustomer(id int) (*CustomerResponse, error) {
 
 		}
 
-		log.Println(err)
+		logs.Error(err)
 		return nil, err
 	}
 	var custResponse = CustomerResponse{
