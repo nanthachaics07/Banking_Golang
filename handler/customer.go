@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"bank_test01/errs"
 	"bank_test01/service"
 	"encoding/json"
 	"fmt"
@@ -21,6 +22,13 @@ func NewCustomerHandler(custSrv service.CustomerService) CustomerHandler {
 func (h CustomerHandler) GetCustomers(w http.ResponseWriter, r *http.Request) {
 	customers, err := h.custSrv.GetCustomers()
 	if err != nil {
+
+		appErr, ok := err.(errs.AppError)
+		if ok {
+			w.WriteHeader(appErr.Code)
+			fmt.Fprintln(w, appErr.Messesage)
+		}
+
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, err)
 		return
