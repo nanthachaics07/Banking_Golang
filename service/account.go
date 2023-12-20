@@ -1,0 +1,15 @@
+package service
+
+type NewAccountRequest struct {
+	AccountID   int    `db:"account_id"`
+	CustomerID  int    `db:"customer_id"`
+	OpeningDate string `db:"opening_date"`
+	AccountType string `db:"account_type"`
+	Amount      int    `db:"amount"`
+	Status      int    `db:"status"`
+}
+
+type AccountService interface {
+	NewAccount()
+	GetAccount(int)
+}
