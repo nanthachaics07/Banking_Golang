@@ -17,3 +17,10 @@ func NewNotFoundError(message string) error {
 		Messesage: message,
 	}
 }
+
+func NewUnexpectedError(message string) error {
+	return AppError{
+		Code:      http.StatusInternalServerError,
+		Messesage: message,
+	}
+}
