@@ -1,15 +1,19 @@
 package service
 
 type NewAccountRequest struct {
-	AccountID   int    `db:"account_id"`
-	CustomerID  int    `db:"customer_id"`
-	OpeningDate string `db:"opening_date"`
-	AccountType string `db:"account_type"`
-	Amount      int    `db:"amount"`
-	Status      int    `db:"status"`
+	AccountType string  `json:"account_type"`
+	Amount      float64 `json:"amount"`
+}
+
+type AccountResponse struct {
+	AccountID   int     `json:"account_id"`
+	OpeningDate string  `json:"opening_date"`
+	AccountType string  `json:"account_type"`
+	Amount      float64 `json:"amount"`
+	Status      int     `json:"status"`
 }
 
 type AccountService interface {
-	NewAccount()
-	GetAccount(int)
+	NewAccount(int, NewAccountRequest) (*AccountResponse, error)
+	GetAccount(int) ([]AccountResponse, error)
 }
