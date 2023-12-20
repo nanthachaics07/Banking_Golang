@@ -10,6 +10,6 @@ type Account struct {
 }
 
 type AccountRepository interface {
-	Create()
-	GetAll()
+	Create(Account) (*Account, error)
+	GetAll() ([]Account, error)
 }
