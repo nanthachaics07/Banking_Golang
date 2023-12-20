@@ -11,5 +11,5 @@ type Account struct {
 
 type AccountRepository interface {
 	Create(Account) (*Account, error)
-	GetAll() ([]Account, error)
+	GetAll(customerID int) ([]Account, error)
 }
