@@ -1,3 +1,1 @@
-hello world!!!
-
-cr: CodeBangkok
+#learn from cr: CodeBangkok
