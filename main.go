@@ -2,10 +2,12 @@ package main
 
 import (
 	"bank_test01/handler"
+	logs "bank_test01/log"
 	"bank_test01/repository"
 	"bank_test01/service"
 	"fmt"
 	"strings"
+	"time"
 
 	"net/http"
 
@@ -19,18 +21,7 @@ func main() {
 
 	initConfig()
 
-	dsn := fmt.Sprintf("%v:%v@(%v:%v)/%v?parseTime=true",
-		viper.GetString("db.username"),
-		viper.GetString("db.password"),
-		viper.GetString("db.host"),
-		viper.GetInt("db.port"),
-		viper.GetString("db.database"),
-	)
-
-	db, err := sqlx.Open(viper.GetString("db.driver"), dsn)
-	if err != nil {
-		panic(err)
-	}
+	db := initDatabase()
 
 	customerRepositoryDB := repository.NewCustomerRepositoryDB(db)
 	customerRepositoryMock := repository.NewCustomerRepositoryMock()
@@ -44,14 +35,18 @@ func main() {
 	router.HandleFunc("/customers", customerHandler.GetCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{customerID:[0-9]+}", customerHandler.GetCustomer).Methods(http.MethodGet)
 
-	go func() {
-		fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
-		if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
-			panic(err)
-		}
-	}()
-	// Block the main goroutine to keep the server running
-	select {}
+	// log.Printf("Server is listening on port %v", viper.GetInt("app.port"))
+	logs.Info("Server is listening on port " + viper.GetString("app.port"))
+	http.ListenAndServe(fmt.Sprintf(":%v", viper.GetInt("app.port")), router)
+
+	// go func() {
+	// 	fmt.Printf("Server is listening on port %v", viper.GetString("app.port"))
+	// 	if err := http.ListenAndServe(fmt.Sprintf(":%v", viper.GetString("app.port")), router); err != nil {
+	// 		panic(err)
+	// 	}
+	// }()
+	// // Block the main goroutine to keep the server running
+	// select {}
 
 }
 
@@ -68,4 +63,35 @@ func initConfig() {
 
 	}
 
+}
+
+func initTimeZone() {
+	ict, err := time.LoadLocation("Asia/Bangkok")
+	if err != nil {
+		panic(err)
+	}
+
+	time.Local = ict
+}
+
+func initDatabase() *sqlx.DB {
+	dsn := fmt.Sprintf("%v:%v@(%v:%v)/%v?parseTime=true",
+		viper.GetString("db.username"),
+		viper.GetString("db.password"),
+		viper.GetString("db.host"),
+		viper.GetInt("db.port"),
+		viper.GetString("db.database"),
+	)
+
+	db, err := sqlx.Open(viper.GetString("db.driver"), dsn)
+	if err != nil {
+		panic(err)
+	}
+
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	// Set memory
+	db.SetMaxIdleConns(10)
+
+	return db
 }
